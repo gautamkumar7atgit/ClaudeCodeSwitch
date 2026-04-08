@@ -2,7 +2,7 @@
 # ccswitch installer
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/YOUR_GITHUB_USER/CCSwitch/main/scripts/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/gautamkumar7atgit/ClaudeCodeSwitch/main/scripts/install.sh | bash
 #
 # What it does:
 #   1. Detects architecture (arm64 / x86_64)
@@ -12,7 +12,7 @@
 
 set -euo pipefail
 
-REPO="YOUR_GITHUB_USER/CCSwitch"
+REPO="gautamkumar7atgit/ClaudeCodeSwitch"
 BINARY="ccswitch"
 INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
 
