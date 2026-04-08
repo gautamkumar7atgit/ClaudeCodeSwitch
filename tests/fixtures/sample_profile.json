@@ -1,0 +1,10 @@
+{
+  "claudeAiOauth": {
+    "accessToken": "sk-ant-oat01-test-access-token-abcdefgh",
+    "refreshToken": "sk-ant-rt-test-refresh-token-abcdefgh"
+  },
+  "_meta": {
+    "name": "testprofile",
+    "lastSynced": "2026-04-08T10:30:00Z"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cargo init:*)",
+      "Bash(cargo check:*)",
+      "Bash(cargo test:*)",
+      "Bash(cargo build:*)",
+      "Bash(./target/debug/ccswitch --help)",
+      "Bash(./target/debug/ccswitch daemon:*)",
+      "Bash(rustup target:*)",
+      "Bash(chmod +x:*)",
+      "Bash(sudo cp:*)",
+      "Bash(security find-generic-password:*)",
+      "Bash(cp /Users/rnf-phonato/Desktop/My/RustProjects/CCSwitch/target/release/ccswitch /Users/rnf-phonato/.local/bin/ccswitch)",
+      "Bash(md5 /Users/rnf-phonato/.local/bin/ccswitch)",
+      "Bash(ccswitch use:*)",
+      "Bash(ccswitch status:*)",
+      "Bash(ccswitch list:*)",
+      "Bash(./target/debug/ccswitch status:*)",
+      "Bash(git:*)"
+    ]
+  }
+}

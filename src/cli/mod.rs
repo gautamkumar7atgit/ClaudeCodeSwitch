@@ -1,0 +1,65 @@
+use clap::{Parser, Subcommand};
+
+#[derive(Parser, Debug)]
+#[command(
+    name = "ccswitch",
+    author,
+    version,
+    about = "Switch between multiple Claude Code OAuth accounts"
+)]
+pub struct Cli {
+    /// Enable verbose output
+    #[arg(short, long, global = true)]
+    pub verbose: bool,
+
+    #[command(subcommand)]
+    pub command: Commands,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum Commands {
+    /// Save current Keychain credentials as a named profile
+    Add {
+        /// Profile name
+        name: String,
+        /// Overwrite existing profile without prompting
+        #[arg(long)]
+        overwrite: bool,
+    },
+    /// Switch to a saved profile
+    Use {
+        /// Profile name
+        name: String,
+    },
+    /// List all saved profiles
+    List,
+    /// Remove a saved profile
+    Remove {
+        /// Profile name
+        name: String,
+        /// Skip confirmation prompt when removing the active profile
+        #[arg(long)]
+        force: bool,
+    },
+    /// Show current status
+    Status,
+    /// Manage the background sync daemon
+    Daemon {
+        #[command(subcommand)]
+        command: DaemonCommands,
+    },
+    /// Initialize ccswitch (create dirs, import existing credentials)
+    Init,
+    /// Remove all ccswitch data
+    Uninstall,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum DaemonCommands {
+    /// Start the sync daemon
+    Start,
+    /// Stop the sync daemon
+    Stop,
+    /// Show daemon status
+    Status,
+}
