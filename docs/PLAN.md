@@ -166,22 +166,22 @@
 
 ### Task 4.1: Daemon Poll Loop (`src/daemon/mod.rs`)
 - [✓] Entry point `run_daemon()` called when binary launched with `--daemon` internal flag — 2026-04-08
-- [✓] Log writing to `~/.claude-switcher/daemon.log` — 2026-04-08
+- [✓] Log writing to `~/.claude-switcher/daemon.log` with **local-time** timestamps (`%Y-%m-%d %H:%M:%S %z`) — 2026-04-08 (timestamp format updated 2026-04-10)
 - [✓] Log rotation: when file exceeds 1 MB, rename to `daemon.log.1`, start fresh — 2026-04-08
-- [✓] Main loop: sleep 30s → read Keychain → compare → if refresh_token same but access_token changed, sync — 2026-04-08
-- [✓] On foreign tokens (both differ): log WARN only, do nothing — 2026-04-08
+- [✓] Main loop: sleep 30s → read Keychain → compare → always sync back when any token differs (access-only rotation **or** full token rotation) — 2026-04-08 (sync logic fixed 2026-04-10)
 - [✓] Handle SIGTERM gracefully via atomic flag — 2026-04-08
 
 ### Task 4.2: Launchd Integration (`src/daemon/launchd.rs`)
 - [✓] Implement `generate_plist(binary_path: &Path) -> String` — 2026-04-08
-- [✓] Implement `install_plist(binary_path: &Path) -> anyhow::Result<()>` — 2026-04-08
-- [✓] Implement `uninstall_plist() -> anyhow::Result<()>` — 2026-04-08
+- [✓] Implement `install_plist(binary_path: &Path) -> anyhow::Result<()>` — uses `launchctl bootstrap gui/<uid>` (macOS 13+ API); plist stays on disk for auto-load on every login — 2026-04-08 (fixed 2026-04-10)
+- [✓] Implement `stop_daemon() -> anyhow::Result<()>` — uses `launchctl bootout gui/<uid>/<label>`; stops process without removing plist — 2026-04-10
+- [✓] Implement `uninstall_plist() -> anyhow::Result<()>` — full uninstall: bootout + plist file removal — 2026-04-08 (fixed 2026-04-10)
 - [✓] Implement `daemon_is_loaded() -> bool` — 2026-04-08
 - [✓] Implement `get_daemon_pid() -> Option<u32>` — 2026-04-08
 
 ### Task 4.3: `ccswitch daemon {start|stop|status}` (`src/commands/daemon.rs`)
-- [✓] `daemon start`: idempotency check, restart prompt, install + load — 2026-04-08
-- [✓] `daemon stop`: not-running guard, unload + remove plist — 2026-04-08
+- [✓] `daemon start`: idempotency check, restart prompt, install + bootstrap — 2026-04-08 (fixed 2026-04-10)
+- [✓] `daemon stop`: not-running guard, bootout only (plist kept for auto-start on next login) — 2026-04-08 (fixed 2026-04-10)
 - [✓] `daemon status`: running/stopped, PID, log tail — 2026-04-08
 
 ### Task 4.4: M3 Integration Tests
@@ -281,6 +281,30 @@
 | M5: Universal Binary | ✅ Complete | 2026-04-08 |
 | M6: Distribution | ✅ Complete | 2026-04-08 |
 | M7: Documentation | ✅ Complete | 2026-04-08 |
+| v0.1.1 Patch | ✅ Complete | 2026-04-10 |
+
+---
+
+## Patch History
+
+### v0.1.1 — 2026-04-10
+
+**Bug: daemon not syncing after full OAuth rotation**
+- Claude Code rotates both access + refresh tokens every few days. The daemon previously only synced when the refresh token was unchanged, treating full rotation as "foreign credentials" and logging WARN instead of syncing. Fixed: daemon now always syncs keychain → active profile whenever any token differs.
+- Affected: `src/daemon/mod.rs` — `poll_once()`
+
+**Bug: daemon not auto-starting on login after `daemon stop`**
+- `daemon stop` called `uninstall_plist()` which deleted the plist file from `~/Library/LaunchAgents/`. Without the plist, macOS had nothing to auto-load on the next login, requiring `ccswitch daemon start` after every reboot.
+- Fixed: introduced `stop_daemon()` (bootout only, plist kept) vs `uninstall_plist()` (full removal, only used by `ccswitch uninstall`). `daemon stop` now uses `stop_daemon()`.
+- Affected: `src/daemon/launchd.rs`, `src/commands/daemon.rs`
+
+**Bug: deprecated `launchctl load/unload` on macOS 15 Sequoia**
+- Replaced `launchctl load` → `launchctl bootstrap gui/<uid>` and `launchctl unload` → `launchctl bootout gui/<uid>/<label>`. The new API is stable on macOS 13+ and persists correctly across reboots.
+- Affected: `src/daemon/launchd.rs`
+
+**Improvement: daemon log timestamps in local time**
+- Log timestamps were UTC (`2026-04-10T14:00:27Z`). Changed to local time with offset (`2026-04-10 19:30:27 +0530`) using `chrono::Local`.
+- Affected: `src/daemon/mod.rs` — `daemon_log()`
 
 ---
 

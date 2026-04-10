@@ -37,6 +37,11 @@ pub fn generate_plist(binary_path: &Path) -> String {
     )
 }
 
+fn gui_domain() -> String {
+    // SAFETY: getuid() is always safe to call
+    format!("gui/{}", unsafe { libc::getuid() })
+}
+
 pub fn install_plist(binary_path: &Path) -> Result<()> {
     let p = paths();
     let plist_content = generate_plist(binary_path);
@@ -48,33 +53,45 @@ pub fn install_plist(binary_path: &Path) -> Result<()> {
     fs::write(&p.plist_file, &plist_content)
         .with_context(|| format!("failed to write plist to {}", p.plist_file.display()))?;
 
+    // Use bootstrap (macOS 13+); plist stays on disk so it auto-loads on every login
     let output = Command::new("launchctl")
-        .args(["load", &p.plist_file.to_string_lossy()])
+        .args(["bootstrap", &gui_domain(), &p.plist_file.to_string_lossy()])
         .output()
-        .context("failed to run launchctl load")?;
+        .context("failed to run launchctl bootstrap")?;
 
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
-        bail!("launchctl load failed: {stderr}");
+        bail!("launchctl bootstrap failed: {stderr}");
     }
 
     Ok(())
 }
 
+/// Stop the running daemon without removing the plist — it will auto-start on next login.
+pub fn stop_daemon() -> Result<()> {
+    let domain_target = format!("{}/{}", gui_domain(), LABEL);
+    let output = Command::new("launchctl")
+        .args(["bootout", &domain_target])
+        .output()
+        .context("failed to run launchctl bootout")?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        bail!("launchctl bootout failed: {stderr}");
+    }
+
+    Ok(())
+}
+
+/// Stop the daemon AND remove the plist (full uninstall — won't auto-start on login).
 pub fn uninstall_plist() -> Result<()> {
     let p = paths();
 
+    if daemon_is_loaded() {
+        stop_daemon()?;
+    }
+
     if p.plist_file.exists() {
-        let output = Command::new("launchctl")
-            .args(["unload", &p.plist_file.to_string_lossy()])
-            .output()
-            .context("failed to run launchctl unload")?;
-
-        if !output.status.success() {
-            let stderr = String::from_utf8_lossy(&output.stderr);
-            bail!("launchctl unload failed: {stderr}");
-        }
-
         fs::remove_file(&p.plist_file)
             .with_context(|| format!("failed to remove {}", p.plist_file.display()))?;
     }

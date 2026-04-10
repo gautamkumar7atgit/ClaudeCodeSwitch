@@ -37,8 +37,8 @@ fn stop() -> Result<()> {
         print_warn("Daemon is not running.");
         return Ok(());
     }
-    launchd::uninstall_plist()?;
-    print_success("Daemon stopped.");
+    launchd::stop_daemon()?;
+    print_success("Daemon stopped. It will restart automatically on next login.");
     Ok(())
 }
 

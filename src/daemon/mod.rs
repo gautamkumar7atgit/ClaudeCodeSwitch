@@ -6,7 +6,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 
-use chrono::Utc;
+use chrono::{Local, Utc};
 
 use crate::config::{paths, DAEMON_LOG_MAX_BYTES, POLL_INTERVAL_SECS};
 use crate::keychain::read_keychain;
@@ -90,27 +90,21 @@ fn poll_once() -> anyhow::Result<()> {
         return Ok(());
     }
 
-    // Determine if this looks like a silent OAuth refresh:
-    // refresh_token unchanged but access_token rotated → sync back
-    if kc_creds.refresh_token == profile_creds.refresh_token {
-        daemon_log(
-            &p.daemon_log,
-            "INFO",
-            &format!("token refresh detected for \"{active_name}\" — syncing"),
-        );
-        profile.claude_ai_oauth = kc_creds.clone();
-        profile.meta.last_synced = Utc::now();
-        save_profile(&profile)?;
+    // Keychain differs from profile — Claude Code refreshed tokens (access-only or full
+    // rotation). Always sync back so the profile stays current.
+    let reason = if kc_creds.refresh_token == profile_creds.refresh_token {
+        "access token refresh"
     } else {
-        // Both tokens differ — Keychain was changed externally (foreign credentials)
-        daemon_log(
-            &p.daemon_log,
-            "WARN",
-            &format!(
-                "keychain credentials don't match active profile \"{active_name}\" — ignoring"
-            ),
-        );
-    }
+        "full token rotation"
+    };
+    daemon_log(
+        &p.daemon_log,
+        "INFO",
+        &format!("{reason} detected for \"{active_name}\" — syncing"),
+    );
+    profile.claude_ai_oauth = kc_creds.clone();
+    profile.meta.last_synced = Utc::now();
+    save_profile(&profile)?;
 
     Ok(())
 }
@@ -128,7 +122,7 @@ fn daemon_log(log_path: &std::path::Path, level: &str, msg: &str) {
         }
     }
 
-    let ts = Utc::now().format("%Y-%m-%dT%H:%M:%SZ");
+    let ts = Local::now().format("%Y-%m-%d %H:%M:%S %z");
     let line = format!("{ts} [{level}] {msg}\n");
 
     if let Ok(mut f) = OpenOptions::new().create(true).append(true).open(log_path) {
