@@ -4,6 +4,34 @@ All notable changes to ccswitch are documented here.
 
 ---
 
+## [0.1.2] — 2026-04-13
+
+### Fixed
+
+- `install.sh`: detect existing Homebrew-managed install and abort with instructions to `brew uninstall ccswitch` first, preventing conflicting binaries in `$PATH`
+- `install.sh`: warn when overwriting an existing curl-installed binary instead of silently replacing it
+
+### Changed
+
+- `scripts/homebrew/ccswitch.rb`: corrected version (`1.0.0` → `0.1.1`), filled real SHA256, updated URLs and tap references to `gautamkumar7atgit`
+- Homebrew tap repo (`gautamkumar7atgit/homebrew-ccswitch`) created and published
+
+---
+
+## [0.1.1] — 2026-04-10
+
+### Fixed
+
+- Daemon: sync active profile whenever any token differs (access-only rotation was previously misclassified as foreign credentials and skipped)
+- `daemon stop`: use `launchctl bootout` only — keep plist in `~/Library/LaunchAgents/` so daemon auto-starts on next login
+- `daemon start`: replaced deprecated `launchctl load/unload` with `launchctl bootstrap/bootout gui/<uid>` (macOS 13+ API)
+
+### Changed
+
+- Daemon log timestamps now use local time with UTC offset (e.g. `2026-04-10 19:30:27 +0530`) instead of UTC
+
+---
+
 ## [0.1.0] — 2026-04-08
 
 Initial release.

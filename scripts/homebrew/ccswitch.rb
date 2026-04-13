@@ -1,10 +1,10 @@
 # Homebrew formula for ccswitch.
 #
 # This file belongs in a tap repo, e.g.:
-#   https://github.com/YOUR_GITHUB_USER/homebrew-ccswitch
+#   https://github.com/gautamkumar7atgit/homebrew-ccswitch
 #
 # Install command:
-#   brew tap YOUR_GITHUB_USER/ccswitch
+#   brew tap gautamkumar7atgit/ccswitch
 #   brew install ccswitch
 #
 # To update after a new release:
@@ -15,12 +15,12 @@
 
 class Ccswitch < Formula
   desc "Switch between multiple Claude Code OAuth accounts on macOS"
-  homepage "https://github.com/YOUR_GITHUB_USER/CCSwitch"
-  version "0.1.0"
+  homepage "https://github.com/gautamkumar7atgit/ClaudeCodeSwitch"
+  version "0.1.1"
 
   # Universal binary (arm64 + x86_64)
-  url "https://github.com/YOUR_GITHUB_USER/CCSwitch/releases/download/v#{version}/ccswitch"
-  sha256 "REPLACE_WITH_SHA256_FROM_RELEASE"
+  url "https://github.com/gautamkumar7atgit/ClaudeCodeSwitch/releases/download/v#{version}/ccswitch"
+  sha256 "ba8e4970c230f77a6434d180f67c0dad78f0873366f4756d7ae6f6123802af50"
 
   # No build step — we distribute a pre-built universal binary
   bottle :unneeded

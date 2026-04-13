@@ -94,6 +94,20 @@ fi
 
 chmod +x "$TMP_BIN"
 
+# ── Existing install check ────────────────────────────────────────────────────
+
+EXISTING="$(command -v "$BINARY" 2>/dev/null || true)"
+if [[ -n "$EXISTING" ]]; then
+    EXISTING_VERSION="$("$EXISTING" --version 2>/dev/null | awk '{print $NF}' || true)"
+    if [[ "$EXISTING" == *"homebrew"* || "$EXISTING" == *"Cellar"* ]]; then
+        printf '\033[33m!\033[0m  Found existing Homebrew install at %s (%s)\n' "$EXISTING" "$EXISTING_VERSION"
+        printf '\033[33m!\033[0m  Remove it first with: brew uninstall ccswitch\n'
+        err "Aborting to avoid conflicting installs. Uninstall the Homebrew version first."
+    else
+        printf '\033[33m!\033[0m  Overwriting existing install at %s (%s)\n' "$EXISTING" "$EXISTING_VERSION"
+    fi
+fi
+
 if [[ -w "$INSTALL_DIR" ]]; then
     mv "$TMP_BIN" "${INSTALL_DIR}/${BINARY}"
 else
