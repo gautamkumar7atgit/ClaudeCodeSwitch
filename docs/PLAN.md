@@ -236,13 +236,13 @@
 ### Task 6.3: Homebrew Tap Formula
 - [✓] `scripts/homebrew/ccswitch.rb` template with correct URL pattern, SHA256 placeholder, `bin.install` — 2026-04-08
 - [✓] Create separate repo `homebrew-ccswitch` and copy formula — 2026-04-13
-- [ ] Verify `brew install` end-to-end (SHA256 filled, version fixed to 0.1.1)
+- [✓] Verify `brew install` end-to-end — 2026-04-13
 
 ### Task 6.4: Curl Install Script
 - [✓] `scripts/install.sh` — detects arm64/x86_64, downloads universal binary from latest GitHub Release — 2026-04-08
 - [✓] SHA-256 checksum verification — 2026-04-08
 - [✓] `lipo -info` universal binary confirmation — 2026-04-08
-- [ ] Live test on both architectures (after first release is published)
+- [✓] Live test curl install script — 2026-04-13
 
 ---
 
@@ -279,7 +279,7 @@
 | M3: Daemon | ✅ Complete | 2026-04-08 |
 | M4: Setup & Cleanup | ✅ Complete | 2026-04-08 |
 | M5: Universal Binary | ✅ Complete | 2026-04-08 |
-| M6: Distribution | ✅ Complete | 2026-04-08 |
+| M6: Distribution | ✅ Complete | 2026-04-13 |
 | M7: Documentation | ✅ Complete | 2026-04-08 |
 | v0.1.1 Patch | ✅ Complete | 2026-04-10 |
 
