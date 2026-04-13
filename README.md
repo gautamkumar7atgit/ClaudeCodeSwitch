@@ -9,13 +9,14 @@ Switch between multiple Claude Code OAuth accounts on macOS by swapping credenti
 **Homebrew (recommended)**
 
 ```bash
-brew install gautam/ccswitch/ccswitch
+brew tap gautamkumar7atgit/ccswitch
+brew install ccswitch
 ```
 
 **curl one-liner**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/gautam/ccswitch/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/gautamkumar7atgit/ClaudeCodeSwitch/main/scripts/install.sh | bash
 ```
 
 Both methods install a universal binary (arm64 + x86_64).
