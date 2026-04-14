@@ -26,6 +26,12 @@ fn main() {
         Commands::Daemon { command } => commands::daemon::run(command, verbose),
         Commands::Init => commands::init::run(verbose),
         Commands::Uninstall => commands::uninstall::run(verbose),
+        Commands::Export { name, all, output, no_encrypt } => {
+            commands::export::run(name.as_deref(), *all, output.as_deref(), *no_encrypt, verbose)
+        }
+        Commands::Import { file, r#as, overwrite } => {
+            commands::import::run(file, r#as.as_deref(), *overwrite, verbose)
+        }
     };
 
     if let Err(e) = result {

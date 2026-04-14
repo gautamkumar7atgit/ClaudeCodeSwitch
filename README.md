@@ -157,6 +157,44 @@ ccswitch daemon status
 
 ---
 
+### `ccswitch export <name>`
+
+Export a saved profile (or all profiles) to a portable `.ccspack` bundle. The bundle is
+encrypted by default — you will be prompted for a passphrase.
+
+```
+ccswitch export work                         # single profile → work.ccspack
+ccswitch export work --output /tmp/w.ccspack # custom output path
+ccswitch export --all                        # all profiles → ccswitch-export.ccspack
+ccswitch export work --no-encrypt            # plaintext bundle (trusted env only)
+```
+
+| Flag | Description |
+|------|-------------|
+| `--all` | Export every saved profile into one bundle |
+| `--output <file>` | Write bundle to this path instead of the default |
+| `--no-encrypt` | Skip passphrase encryption (prints a warning) |
+
+---
+
+### `ccswitch import <file>`
+
+Import profiles from a `.ccspack` bundle. If the bundle is encrypted, you will be
+prompted for the passphrase.
+
+```
+ccswitch import work.ccspack                   # import all profiles in the bundle
+ccswitch import work.ccspack --as personal     # rename on import (single-profile only)
+ccswitch import work.ccspack --overwrite       # skip overwrite confirmation
+```
+
+| Flag | Description |
+|------|-------------|
+| `--as <name>` | Rename the imported profile (single-profile bundles only) |
+| `--overwrite` | Overwrite existing profiles without prompting |
+
+---
+
 ### `ccswitch uninstall`
 
 Remove all ccswitch data: `~/.claude-switcher/` and the launchd plist. **Your Keychain credentials are never touched.**
@@ -188,6 +226,20 @@ ccswitch uninstall
 **Background daemon (30 s poll loop)**
 
 Claude Code silently refreshes OAuth tokens in the background. The daemon detects when the Keychain access token has rotated (while the refresh token stays the same) and writes the updated tokens back to the active profile on disk so they aren't lost on the next switch.
+
+**Sharing credentials with a team (`ccswitch export` / `ccswitch import`)**
+
+1. Admin runs `ccswitch export work` — profile is serialized to JSON, encrypted with
+   AES-256-GCM (key derived via Argon2id from the passphrase), and written to `work.ccspack`
+2. Admin sends `work.ccspack` to teammates and shares the passphrase through a separate
+   secure channel (e.g. password manager, Signal — never in the same Slack message as the file)
+3. Each teammate runs `ccswitch import work.ccspack`, enters the passphrase, and the profile
+   is saved to `~/.claude-switcher/profiles/work.json` (chmod 600)
+4. Teammate runs `ccswitch use work` — no browser re-auth needed
+
+> **Note:** Multiple people sharing the same OAuth token may occasionally trigger session
+> conflicts if Claude Code invalidates concurrent sessions. If that happens, one user must
+> re-authenticate and the admin should re-export.
 
 ---
 

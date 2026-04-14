@@ -4,6 +4,23 @@ All notable changes to ccswitch are documented here.
 
 ---
 
+## [1.0.0] — 2026-04-13
+
+### Added
+
+- `ccswitch export <name|--all>` — bundle one or all saved profiles into a portable
+  `.ccspack` file; encrypted by default using AES-256-GCM with an Argon2id-derived
+  passphrase key (no plaintext tokens ever written without explicit `--no-encrypt`)
+- `ccswitch import <file>` — restore profiles from a `.ccspack` bundle; prompts for the
+  passphrase on encrypted bundles; supports `--as <name>` rename and `--overwrite`
+- `--output <file>` flag on export to control the output path
+- `--no-encrypt` flag for plaintext bundles in scripted/trusted environments (prints a
+  visible warning before writing)
+- Team-sharing workflow: admin exports → shares file + passphrase separately → teammates
+  import, skipping the interactive `/login` re-auth step entirely
+
+---
+
 ## [0.1.2] — 2026-04-13
 
 ### Fixed

@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(
@@ -52,6 +53,32 @@ pub enum Commands {
     Init,
     /// Remove all ccswitch data
     Uninstall,
+    /// Export one or all profiles to a portable encrypted bundle
+    Export {
+        /// Profile name to export (omit when using --all)
+        name: Option<String>,
+        /// Export every saved profile
+        #[arg(long)]
+        all: bool,
+        /// Output file path (default: <name>.ccspack or ccswitch-export.ccspack)
+        #[arg(long, short)]
+        output: Option<PathBuf>,
+        /// Write a plaintext bundle without passphrase encryption
+        /// (use only in fully trusted environments)
+        #[arg(long)]
+        no_encrypt: bool,
+    },
+    /// Import profiles from an exported bundle
+    Import {
+        /// Path to the .ccspack bundle file
+        file: PathBuf,
+        /// Rename the imported profile — only valid for single-profile bundles
+        #[arg(long, value_name = "NAME")]
+        r#as: Option<String>,
+        /// Overwrite existing profiles without prompting
+        #[arg(long)]
+        overwrite: bool,
+    },
 }
 
 #[derive(Subcommand, Debug)]

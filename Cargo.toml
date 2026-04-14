@@ -1,6 +1,6 @@
 [package]
 name = "ccswitch"
-version = "0.1.2"
+version = "1.0.0"
 edition = "2021"
 
 [dependencies]
@@ -15,6 +15,11 @@ dirs = "5"
 log = "0.4"
 env_logger = "0.11"
 libc = "0.2"
+aes-gcm = "0.10"
+argon2 = "0.5"
+rand = "0.8"
+base64 = "0.22"
+rpassword = "7"
 
 [dev-dependencies]
 tempfile = "3"
