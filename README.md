@@ -11,6 +11,8 @@ Switch between multiple Claude Code OAuth accounts on macOS by swapping credenti
 ```bash
 brew tap gautamkumar7atgit/ccswitch
 brew install ccswitch
+# One-time: enable auto-updates for this tap
+brew tap --force-auto-update gautamkumar7atgit/ccswitch
 ```
 
 **curl one-liner**
@@ -20,6 +22,18 @@ curl -fsSL https://raw.githubusercontent.com/gautamkumar7atgit/ClaudeCodeSwitch/
 ```
 
 Both methods install a universal binary (arm64 + x86_64).
+
+---
+
+## Update
+
+```bash
+ccswitch update
+```
+
+Detects your install method automatically:
+- **Homebrew:** runs `brew upgrade ccswitch`
+- **curl install:** downloads the latest binary from GitHub, verifies SHA256, and replaces the current binary in-place
 
 ---
 
@@ -192,6 +206,18 @@ ccswitch import work.ccspack --overwrite       # skip overwrite confirmation
 |------|-------------|
 | `--as <name>` | Rename the imported profile (single-profile bundles only) |
 | `--overwrite` | Overwrite existing profiles without prompting |
+
+---
+
+### `ccswitch update`
+
+Update ccswitch to the latest release. Detects your install method automatically.
+
+```
+ccswitch update
+```
+
+Homebrew users: the first time after a new release, run `brew upgrade ccswitch`. For future releases, `ccswitch update` handles it automatically.
 
 ---
 

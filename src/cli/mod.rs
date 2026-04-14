@@ -79,6 +79,8 @@ pub enum Commands {
         #[arg(long)]
         overwrite: bool,
     },
+    /// Update ccswitch to the latest release
+    Update,
 }
 
 #[derive(Subcommand, Debug)]

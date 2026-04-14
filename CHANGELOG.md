@@ -4,6 +4,18 @@ All notable changes to ccswitch are documented here.
 
 ---
 
+## [1.0.1] — 2026-04-14
+
+### Added
+
+- `ccswitch update` — self-update command: detects install method (Homebrew or curl) and
+  updates in-place; curl-installed users get SHA256-verified binary replacement; Homebrew
+  users get `brew upgrade ccswitch` run automatically
+- `brew tap --force-auto-update` instruction added to install docs, formula caveats, and
+  tap README so Homebrew users receive future releases via `brew upgrade ccswitch`
+
+---
+
 ## [1.0.0] — 2026-04-13
 
 ### Added

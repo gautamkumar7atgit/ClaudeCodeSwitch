@@ -32,6 +32,7 @@ fn main() {
         Commands::Import { file, r#as, overwrite } => {
             commands::import::run(file, r#as.as_deref(), *overwrite, verbose)
         }
+        Commands::Update => commands::update::run(verbose),
     };
 
     if let Err(e) = result {
